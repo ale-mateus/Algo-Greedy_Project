@@ -6,7 +6,7 @@ def program2(n: int, k: int, values: List[int]) -> Tuple[int, List[int]]:
 
     Parameters:
     n (int): number of vaults
-    k (int): no two chosenVaults vaults are within k positions of each other
+    k (int): no two chosen vaults are within k positions of each other
     values (List[int]): the values of the vaults
 
     Returns:
@@ -17,21 +17,24 @@ def program2(n: int, k: int, values: List[int]) -> Tuple[int, List[int]]:
     ############################
     # Add you code here
 
-    remaining = set(range(n))
-    chosen = []
+    remainingVaults = set(range(n)) # all vaults are initially available
+    chosenVaults = [] # list of chosen vault indices (1-indexed not starting from 0)
 
-    while remaining:
-        # find the index of the largest value among remaining
-        i = max(remaining, key=lambda x: values[x])
-        chosen.append(i + 1)  # 1-indexed
+    while remainingVaults:
+        # Get the index of the remaining vault with the highest value
+        i = max(remainingVaults, key=lambda x: values[x])
+        chosenVaults.append(i + 1)  # 1-indexed
 
-        # remove all vaults within k distance
+        # remove all vaults within k distance while making sure we don't go out of bounds
         for j in range(max(0, i - k), min(n, i + k + 1)):
-            remaining.discard(j)
+            remainingVaults.discard(j)
 
-    chosen.sort()
-    total = sum(values[i-1] for i in chosen)
-    return total, chosen
+    chosenVaults.sort()
+    total = 0
+    for idx in chosenVaults:
+        total += values[idx - 1]  # subtract 1 because chosenVaults is 1-indexed
+
+    return total, chosenVaults
 
     ############################
     
