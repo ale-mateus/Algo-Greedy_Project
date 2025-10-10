@@ -2,55 +2,50 @@ from typing import List, Tuple
 
 def program2(n: int, k: int, values: List[int]) -> Tuple[int, List[int]]:
     """
-    Greedy solution to Program 2 (S2: unimodal values)
-
-    Parameters:
-    n (int): number of vaults
-    k (int): no two chosen vaults are within k positions of each other
-    values (List[int]): the values of the vaults
-
-    Returns:
-    int:  maximal total value (approx greedy result)
-    List[int]: the indices of the chosen vaults (1-indexed)
+    Optimized greedy solution to Program 2 (S2: unimodal values)
+    Uses a boolean mask instead of rebuilding the vault list every iteration.
     """
 
-    ############################
-    # Greedy algorithm implementation
+    # Boolean list to mark available vaults
+    available = [True] * n
+    chosenVaults = []
+    left, right = 0, n - 1
 
-    remainingVaults = list(range(n))  # all vaults are initially available
-    chosenVaults = []  # list of chosen vault indices (1-indexed)
+    while left <= right:
+        # Move pointers until we find available vaults
+        while left <= right and not available[left]:
+            left += 1
+        while right >= left and not available[right]:
+            right -= 1
 
-    while remainingVaults:
-        # Compare the first and last remaining vaults based on their values
-        if values[remainingVaults[0]] >= values[remainingVaults[-1]]:
-            i = remainingVaults[0]
+        if left > right:
+            break
+
+        # Greedy choice: compare values at the ends
+        if values[left] >= values[right]:
+            i = left
         else:
-            i = remainingVaults[-1]
+            i = right
 
-        # Choose this vault (convert to 1-indexed)
+        # Choose vault (1-indexed)
         chosenVaults.append(i + 1)
 
-        # Remove all vaults within k distance (inclusive)
-        to_remove = set(range(max(0, i - k), min(n, i + k + 1)))
-        remainingVaults = [v for v in remainingVaults if v not in to_remove]
+        # Block all vaults within k distance
+        for j in range(max(0, i - k), min(n, i + k + 1)):
+            available[j] = False
 
-    # Sort chosen vaults in ascending order
+    # Compute total value
+    total = sum(values[idx - 1] for idx in chosenVaults)
     chosenVaults.sort()
 
-    # Calculate total value
-    total = sum(values[idx - 1] for idx in chosenVaults)
-
     return total, chosenVaults
-
-    ############################
 
 
 if __name__ == '__main__':
     n, k = map(int, input().split())
     values = list(map(int, input().split()))
 
-    m, indices = program2(n, k, values)
-
-    print(m)
+    total, indices = program2(n, k, values)
+    print(total)
     for i in indices:
         print(i)
