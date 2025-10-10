@@ -15,29 +15,34 @@ def program2(n: int, k: int, values: List[int]) -> Tuple[int, List[int]]:
     """
 
     ############################
-    # Add you code here
+    # Greedy algorithm implementation
 
-    remainingVaults = set(range(n)) # all vaults are initially available
-    chosenVaults = [] # list of chosen vault indices (1-indexed not starting from 0)
+    remainingVaults = list(range(n))  # all vaults are initially available
+    chosenVaults = []  # list of chosen vault indices (1-indexed)
 
     while remainingVaults:
-        # Get the index of the remaining vault with the highest value
-        i = max(remainingVaults, key=lambda x: values[x])
-        chosenVaults.append(i + 1)  # 1-indexed
+        # Compare the first and last remaining vaults based on their values
+        if values[remainingVaults[0]] >= values[remainingVaults[-1]]:
+            i = remainingVaults[0]
+        else:
+            i = remainingVaults[-1]
 
-        # remove all vaults within k distance while making sure we don't go out of bounds
-        for j in range(max(0, i - k), min(n, i + k + 1)):
-            remainingVaults.discard(j)
+        # Choose this vault (convert to 1-indexed)
+        chosenVaults.append(i + 1)
 
+        # Remove all vaults within k distance (inclusive)
+        to_remove = set(range(max(0, i - k), min(n, i + k + 1)))
+        remainingVaults = [v for v in remainingVaults if v not in to_remove]
+
+    # Sort chosen vaults in ascending order
     chosenVaults.sort()
-    total = 0
-    for idx in chosenVaults:
-        total += values[idx - 1]  # subtract 1 because chosenVaults is 1-indexed
+
+    # Calculate total value
+    total = sum(values[idx - 1] for idx in chosenVaults)
 
     return total, chosenVaults
 
     ############################
-    
 
 
 if __name__ == '__main__':
