@@ -3,7 +3,7 @@ from typing import List, Tuple
 def program2(n: int, k: int, values: List[int]) -> Tuple[int, List[int]]:
     """
     Solution to Program 2
-    
+
     Parameters:
     n (int): number of vaults
     k (int): no two chosen vaults are within k positions of each other
@@ -54,7 +54,8 @@ if __name__ == '__main__':
     n, k = map(int, input().split())
     values = list(map(int, input().split()))
 
-    total, indices = program2(n, k, values)
-    print(total)
+    m, indices = program2(n, k, values)
+    
+    print(m)
     for i in indices:
         print(i)
