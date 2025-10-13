@@ -19,7 +19,7 @@ def program1(n: int, k: int, values: List[int]) -> Tuple[int, List[int]]:
     ############################
     total, indices = 0, []
 
-    for i in range(n - 1, 0, -(k + 1)):
+    for i in range(n - 1, -1, -(k + 1)):
         total += values[i]
         indices.append(i + 1)
 
