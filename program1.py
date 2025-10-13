@@ -23,6 +23,8 @@ def program1(n: int, k: int, values: List[int]) -> Tuple[int, List[int]]:
         total += values[i]
         indices.append(i + 1)
 
+    indices.reverse()
+
     return total, indices # replace with your code
 
 
