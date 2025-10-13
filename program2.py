@@ -2,8 +2,16 @@ from typing import List, Tuple
 
 def program2(n: int, k: int, values: List[int]) -> Tuple[int, List[int]]:
     """
-    Optimized greedy solution to Program 2 (S2: unimodal values)
-    Uses a boolean mask instead of rebuilding the vault list every iteration.
+    Solution to Program 2
+    
+    Parameters:
+    n (int): number of vaults
+    k (int): no two chosen vaults are within k positions of each other
+    values (List[int]): the values of the vaults
+
+    Returns:
+    int: maximal total value
+    List[int]: the indices of the chosen vaults(1-indexed)
     """
 
     # Boolean list to mark available vaults
@@ -18,6 +26,7 @@ def program2(n: int, k: int, values: List[int]) -> Tuple[int, List[int]]:
         while right >= left and not available[right]:
             right -= 1
 
+        # If pointers cross, break
         if left > right:
             break
 
