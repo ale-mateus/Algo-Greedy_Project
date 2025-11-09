@@ -14,12 +14,36 @@ def program4B(n: int, k: int, values: List[int]) -> Tuple[int, List[int]]:
     int:  maximal total value
     List[int]: the indices of the chosen vaults(1-indexed)
     """
-    ############################
-    # Add you code here
-    ############################
 
-    return 0, [1, 2, 3] # replace with your code
+    dp = [0] * (n + 1)
+    choice = [False] * (n + 1)
 
+    for i in range(1, n + 1):
+        # Option 1: skip current vault
+        skip = dp[i - 1]
+        # Option 2: pick current vault
+        prev = i - k - 1
+        pick = values[i - 1] + (dp[prev] if prev >= 0 else 0)
+
+        # Choose the better option
+        if pick > skip:
+            dp[i] = pick
+            choice[i] = True
+        else:
+            dp[i] = skip
+
+    # Reconstruct chosen vault indices
+    indices = []
+    i = n
+    while i > 0:
+        if choice[i]:
+            indices.append(i)
+            i -= (k + 1)
+        else:
+            i -= 1
+
+    indices.reverse()
+    return dp[n], indices
 
 if __name__ == '__main__':
     n, k = map(int, input().split())
