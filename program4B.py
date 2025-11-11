@@ -15,35 +15,43 @@ def program4B(n: int, k: int, values: List[int]) -> Tuple[int, List[int]]:
     List[int]: the indices of the chosen vaults(1-indexed)
     """
 
-    dp = [0] * (n + 1)
-    choice = [False] * (n + 1)
+    
+    if n == 0:
+        return 0, []
 
-    for i in range(1, n + 1):
-        # Option 1: skip current vault
-        skip = dp[i - 1]
-        # Option 2: pick current vault
-        prev = i - k - 1
-        pick = values[i - 1] + (dp[prev] if prev >= 0 else 0)
+    # dp[i] corresponds to vault i (0-indexed internally)
+    dp = [0] * n
+    prev = [-1] * n   # for reconstruction
 
-        # Choose the better option
-        if pick > skip:
-            dp[i] = pick
-            choice[i] = True
-        else:
-            dp[i] = skip
+    # Fill DP table
+    for i in range(n):
+        dp[i] = values[i]  # option: start new chain at vault i
+        prev[i] = -1
 
-    # Reconstruct chosen vault indices
+        # Check all previous vaults j < i
+        for j in range(i):
+            if i - j > k:  # spacing constraint
+                if dp[j] + values[i] > dp[i]:
+                    dp[i] = dp[j] + values[i]
+                    prev[i] = j
+
+    # Find best ending vault
+    best_sum = 0
+    best_last = -1
+    for i in range(n):
+        if dp[i] > best_sum:
+            best_sum = dp[i]
+            best_last = i
+
+    # Reconstruct chosen vaults
     indices = []
-    i = n
-    while i > 0:
-        if choice[i]:
-            indices.append(i)
-            i -= (k + 1)
-        else:
-            i -= 1
+    i = best_last
+    while i != -1:
+        indices.append(i + 1)  # convert to 1-indexed
+        i = prev[i]
 
     indices.reverse()
-    return dp[n], indices
+    return best_sum, indices
 
 if __name__ == '__main__':
     n, k = map(int, input().split())
