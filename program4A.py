@@ -18,37 +18,36 @@ def program4A(n: int, k: int, values: List[int]) -> Tuple[int, List[int]]:
     memo = [-1] * (n + 1)   # memo[i] stores dp(i), -1 means "not computed"
 
     def dp(i: int) -> int:
-        if i >= n:
+        if i < 0:
             return 0
-
-        # If computed before, return stored value
         if memo[i] != -1:
             return memo[i]
 
-        # Option 1: skip vault i
-        skip = dp(i + 1)
+        max_compatible = 0
+        for j in range(i - k - 1, -1, -1):  # check all previous vaults
+            max_compatible = max(max_compatible, dp(j))
 
-        # Option 2: take vault i
-        take = values[i] + dp(i + k + 1)
-
-        # Store and return best
-        memo[i] = max(skip, take)
+        memo[i] = values[i] + max_compatible
         return memo[i]
+
+    # compute all dp values to ensure memo is filled
+    for i in range(n):
+        dp(i)
+
+    # Find the best value and its ending index
+    best_val = max(memo)
+    best_i = memo.index(best_val)
 
     # Reconstruct chosen vaults
     chosen = []
-    i = 0
-    while i < n:
-        # If taking vault i leads to the dp result, we choose it
-        if dp(i) == values[i] + dp(i + k + 1):
-            chosen.append(i + 1)
-            i += k + 1
-        else:
-            i += 1
+    i = best_i
+    while i >= 0:
+        chosen.append(i + 1)
+        i -= (k + 1)
+    chosen.reverse()
 
-    return dp(0), chosen
+    return best_val, chosen
     ############################
-
 
 
 if __name__ == '__main__':
